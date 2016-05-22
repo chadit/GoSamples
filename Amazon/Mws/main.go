@@ -14,30 +14,19 @@ import (
 	// "github.com/moovweb/gokogiri/xpath"
 )
 
-// var (
-// 	// SellerID or merchant id from user
-// 	SellerID = ""
-// 	// AuthToken from user
-// 	AuthToken = ""
-// 	// Region from user
-// 	Region = "US"
-// 	// AccessKey is from main account
-// 	AccessKey = ""
-// 	// SecretKey is from main account
-// 	SecretKey = ""
-// )
 var (
 	// SellerID or merchant id from user
-	SellerID = "A2PGDU8LTINEYH"
+	SellerID = ""
 	// AuthToken from user
-	AuthToken = "YxL0ZbAFNy0ooOgjvQ+c87wuY9ZLt3QbVascTR9v"
+	AuthToken = ""
 	// Region from user
 	Region = "US"
 	// AccessKey is from main account
-	AccessKey = "AKIAJFQ5GAJVIWOJBMHA"
+	AccessKey = ""
 	// SecretKey is from main account
-	SecretKey = "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"
+	SecretKey = ""
 )
+
 
 func getConfigFile() gmws.MwsConfig {
 	return gmws.MwsConfig{
