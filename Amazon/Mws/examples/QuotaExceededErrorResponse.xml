@@ -1,9 +1,0 @@
-<ErrorResponse xmlns="http://mws.amazonservices.com/schema/Products/2011-10-01">
-  <Error>
-    <Code>QuotaExceeded</Code>
-    <Message>You exceeded your quota of 200.0 requests per 1 hour for operation Products/2011-10-01/GetLowestPricedOffersForASIN.  Your quota will res
-et on Mon Jul 04 20:17:00 UTC 2016</Message>
-    <Type/>
-  </Error>
-  <RequestID>147a0960-13ee-4aa1-a669-3f6d88867a03</RequestID>
-</ErrorResponse>

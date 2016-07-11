@@ -3,7 +3,7 @@ package main
 // go run .\main.go .\model.go .\mwscalls.go .\xmlhelpers.go .\parsers.go
 
 import (
-	"GoSamples/Amazon/Mws"
+	"MyGoPackages/Amazon/Mws"
 	"encoding/json"
 	"fmt"
 )
