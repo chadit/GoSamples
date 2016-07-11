@@ -98,7 +98,7 @@ type lowestPricedOffersAttribute struct {
 }
 
 type amazonFeeOption struct {
-	ReferralFeesPercent  int
+	ReferralFeesPercent  float64
 	VcfDomesticStandard  float64
 	VcfDomesticExpedited float64
 	VcfInternational     *float64
@@ -173,7 +173,7 @@ func getDefaultamazonFeeOptions() map[string]amazonFeeOption {
 	amazonitems["Major Appliances"] = amazonFeeOption{ReferralFeesPercent: 15, VcfDomesticStandard: 0.45, VcfDomesticExpedited: 0.65, VcfInternational: nil, MediaFG: false, VcfPerPound: createFloat64Pointer(0.05), ShippingCreditID: 6, MinReferralFees1: true, MinReferralFees2: false}
 	amazonitems["MotorCycle"] = amazonFeeOption{ReferralFeesPercent: 12, VcfDomesticStandard: 0.45, VcfDomesticExpedited: 0.65, VcfInternational: nil, MediaFG: false, VcfPerPound: createFloat64Pointer(0.05), ShippingCreditID: 6, MinReferralFees1: true, MinReferralFees2: false}
 	amazonitems["Movie"] = amazonFeeOption{ReferralFeesPercent: 15, VcfDomesticStandard: 0.45, VcfDomesticExpedited: 0.65, VcfInternational: nil, MediaFG: false, VcfPerPound: createFloat64Pointer(0.05), ShippingCreditID: 6, MinReferralFees1: false, MinReferralFees2: false}
-	amazonitems["Music"] = amazonFeeOption{ReferralFeesPercent: 15, VcfDomesticStandard: 1.35, VcfDomesticExpedited: 1.35, VcfInternational: createFloat64Pointer(1.35), MediaFG: true, VcfPerPound: createFloat64Pointer(0.05), ShippingCreditID: 6, MinReferralFees1: false, MinReferralFees2: false}
+	amazonitems["Music"] = amazonFeeOption{ReferralFeesPercent: 15, VcfDomesticStandard: 1.35, VcfDomesticExpedited: 1.35, VcfInternational: createFloat64Pointer(1.35), MediaFG: true, VcfPerPound: nil, ShippingCreditID: 6, MinReferralFees1: false, MinReferralFees2: false}
 	amazonitems["Musical Instruments"] = amazonFeeOption{ReferralFeesPercent: 15, VcfDomesticStandard: 0.45, VcfDomesticExpedited: 0.65, VcfInternational: nil, MediaFG: false, VcfPerPound: createFloat64Pointer(0.05), ShippingCreditID: 6, MinReferralFees1: true, MinReferralFees2: false}
 	amazonitems["Network Media Player"] = amazonFeeOption{ReferralFeesPercent: 15, VcfDomesticStandard: 0.45, VcfDomesticExpedited: 0.65, VcfInternational: nil, MediaFG: false, VcfPerPound: createFloat64Pointer(0.05), ShippingCreditID: 6, MinReferralFees1: true, MinReferralFees2: false}
 	amazonitems["Office Electronics"] = amazonFeeOption{ReferralFeesPercent: 15, VcfDomesticStandard: 0.45, VcfDomesticExpedited: 0.65, VcfInternational: nil, MediaFG: false, VcfPerPound: createFloat64Pointer(0.05), ShippingCreditID: 6, MinReferralFees1: true, MinReferralFees2: false}

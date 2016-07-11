@@ -20,6 +20,7 @@ var (
 func CalculateFees(productItem *ProductTracking) float64 {
 	amazonFeeOption := getAmazonFeeOptions(productItem.Category)
 	commissionFees := getCommision(productItem.RegularAmount, productItem.Category, amazonFeeOption)
+
 	var vcfFee float64
 	var fbaHandling float64
 	var pickAndPack float64
@@ -27,14 +28,17 @@ func CalculateFees(productItem *ProductTracking) float64 {
 	var specialHandlingFee float64
 	var storageFee float64
 	var tvFee float64
+	var greater float64
 
 	if amazonFeeOption.MediaFG {
 		vcfFee = getClosingFees(false, false, productItem.PackageWeight, amazonFeeOption)
 	}
 
-	if caseInsensitiveEquals(productItem.Channel, "Amazon") || caseInsensitiveEquals(productItem.Channel, "AmazonPrice") || caseInsensitiveEquals(productItem.Channel, "Merchant") {
+	if caseInsensitiveEquals(productItem.Channel, "Amazon") || caseInsensitiveEquals(productItem.Channel, "AmazonPrice") {
 		amazonProductTier := getProductTierValue(productItem, amazonFeeOption)
-		var greater float64
+		// fmt.Println("productTier : ", amazonProductTier)
+		// fmt.Println("Channel : ", productItem.Channel)
+
 		if productItem.PackageHeight != 0 && productItem.PackageLength != 0 && productItem.PackageWidth != 0 && productItem.PackageWeight != 0 {
 			unitVolume := productItem.PackageWidth * productItem.PackageLength * productItem.PackageHeight
 			storageFee = getAmazonStorageFees(unitVolume, amazonProductTier)
@@ -48,7 +52,18 @@ func CalculateFees(productItem *ProductTracking) float64 {
 			// end package check
 		}
 	}
-	return commissionFees + vcfFee + fbaHandling + pickAndPack + weightHandlingFee + storageFee + tvFee + specialHandlingFee
+	// if productItem.Asin == "B00AVWKUJS" {
+	// 	fmt.Println("commissionFees (0.75) : ", commissionFees)
+	// 	fmt.Println("vcfFee (1.35) : ", vcfFee)
+	// 	fmt.Println("fbaHandling (0) : ", fbaHandling)
+	// 	fmt.Println("pickAndPack (1.06) : ", pickAndPack)
+	// 	fmt.Println("weightHandlingFee (0.5) : ", weightHandlingFee)
+	// 	fmt.Println("storageFee (0) : ", storageFee)
+	// 	fmt.Println("tvFee (0) : ", tvFee)
+	// 	fmt.Println("specialHandlingFee (0) : ", specialHandlingFee)
+	// 	fmt.Println("")
+	// }
+	return toFixed(commissionFees+vcfFee+fbaHandling+pickAndPack+weightHandlingFee+storageFee+tvFee+specialHandlingFee, 2)
 }
 
 // getFbaFees - rules as of 18 Feb 2016
@@ -176,7 +191,7 @@ func getCommision(price float64, productGroup string, option amazonFeeOption) fl
 		return getCeCommission(price, productGroup, option)
 	}
 
-	referral := toFixed(price*float64(option.ReferralFeesPercent), 2)
+	referral := toFixed(price*option.ReferralFeesPercent/100, 2)
 	if option.MinReferralFees1 && referral < 1 {
 		referral = 1
 	}
@@ -199,22 +214,16 @@ func getCommision(price float64, productGroup string, option amazonFeeOption) fl
 }
 
 func getCeCommission(price float64, productGroup string, option amazonFeeOption) float64 {
-	var referral float64
-	for _, name := range getAmazonProductTypeNames() {
-		if caseInsensitiveContains(name, productGroup) {
-			referral = toFixed(price*.15, 2)
-		} else {
-			referral = toFixed(price*float64(option.ReferralFeesPercent), 2)
-		}
+	referral := toFixed(price*float64(option.ReferralFeesPercent/100), 2)
 
-		if option.MinReferralFees1 && referral < 1 {
-			referral = 1
-		}
-
-		if option.MinReferralFees2 && referral < 2 {
-			referral = 2
-		}
+	if option.MinReferralFees1 && referral < 1 {
+		referral = 1
 	}
+
+	if option.MinReferralFees2 && referral < 2 {
+		referral = 2
+	}
+	//	}
 	return referral
 }
 
@@ -222,9 +231,7 @@ func getClosingFees(isInternational bool, isExpedited bool, packageWeight float6
 	fee := option.VcfDomesticStandard
 	if isInternational && option.VcfInternational != nil {
 		fee = *option.VcfInternational
-	}
-
-	if isExpedited {
+	} else if isExpedited {
 		fee = option.VcfDomesticExpedited
 	}
 

@@ -13,10 +13,10 @@ func TestGetDefaultAmazonFeeCount(t *testing.T) {
 }
 
 func TestToyAmazonFeeOptions(t *testing.T) {
-	expected := 15
+	expected := float64(15)
 	defaultAmazonItems := getDefaultamazonFeeOptions()
 	actual := defaultAmazonItems["Toy"]
 	if actual.ReferralFeesPercent != expected {
-		t.Errorf("expected: '%d', got:  '%d'", expected, actual.ReferralFeesPercent)
+		t.Errorf("expected: '%g', got:  '%g'", expected, actual.ReferralFeesPercent)
 	}
 }
