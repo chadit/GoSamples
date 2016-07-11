@@ -11,31 +11,26 @@ import (
 	"github.com/svvu/gomws/mwsHttps"
 )
 
-// "github.com/moovweb/gokogiri"
-// "github.com/moovweb/gokogiri/xpath"
-
 var (
 	// SellerID or merchant id from user
-	SellerID = ""
+	sellerID = ""
 	// AuthToken from user
-	AuthToken = ""
+	authToken = ""
 	// Region from user
-	Region = "US"
+	region = "US"
 	// AccessKey is from main account
-	AccessKey = ""
+	accessKey = ""
 	// SecretKey is from main account
-	SecretKey = ""
+	secretKey = ""
 )
 
 func getConfigFile() gmws.MwsConfig {
 	return gmws.MwsConfig{
-		SellerId:  SellerID,
-		AuthToken: AuthToken,
-		Region:    Region,
-
-		// Optional if already set in env variable
-		AccessKey: AccessKey,
-		SecretKey: SecretKey,
+		SellerId:  sellerID,
+		AuthToken: authToken,
+		Region:    region,
+		AccessKey: accessKey,
+		SecretKey: secretKey,
 	}
 }
 
@@ -45,23 +40,23 @@ func getConfigFile() gmws.MwsConfig {
 
 // getMatchingProduct get a product by asin
 func getMatchingProductForASIN(asin string) *mwsHttps.Response {
-	xmlFileResponse := createMwsHTTPResponse("examples/GetMatchingProductResponse.xml")
-	if xmlFileResponse != nil {
-		return xmlFileResponse
-	}
-
-	fmt.Println("-------- no example aws response ---------")
-	fmt.Println("")
+	// xmlFileResponse := createMwsHTTPResponse("examples/GetMatchingProductResponse.xml")
+	// if xmlFileResponse != nil {
+	// 	return xmlFileResponse
+	// }
+	//
+	// fmt.Println("-------- no example aws response ---------")
+	// fmt.Println("")
 	productsClient, _ := products.NewClient(getConfigFile())
 	response := productsClient.GetMatchingProduct([]string{asin})
 	if response.Error != nil {
-		fmt.Println(response.Error.Error())
+		//	fmt.Println(response.Error.Error())
 		return nil
 	}
 
-	xmlNode, _ := gmws.GenerateXMLNode(response.Body)
-	fmt.Println("------------------------ getMatchingProduct ------------------------")
-	xmlNode.PrintXML()
+	// xmlNode, _ := gmws.GenerateXMLNode(response.Body)
+	// fmt.Println("------------------------ getMatchingProduct ------------------------")
+	// xmlNode.PrintXML()
 
 	return response
 }
@@ -81,7 +76,7 @@ func getMatchingProductForKeyword(keyword string, itemCondition string) *mwsHttp
 	}
 	response := productsClient.ListMatchingProducts(keyword, params)
 	if response.Error != nil {
-		fmt.Println(response.Error.Error())
+		//	fmt.Println(response.Error.Error())
 		return nil
 	}
 
@@ -129,7 +124,7 @@ func getLowestOfferListingsForASIN(asin, itemCondition string) *mwsHttps.Respons
 	}
 	response := productsClient.GetLowestOfferListingsForASIN([]string{asin}, optional)
 	if response.Error != nil {
-		fmt.Println(response.Error.Error())
+		//	fmt.Println(response.Error.Error())
 		return nil
 	}
 	// xmlNode, _ := gmws.GenerateXMLNode(response.Body)

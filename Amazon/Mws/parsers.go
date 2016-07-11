@@ -8,12 +8,25 @@ import (
 	"github.com/svvu/gomws/mwsHttps"
 )
 
+func setMwsKeys(amazonSellerID, amazonAuthToken, amazonRegion, amazonAccessKey, amazonSecretKey string) {
+	sellerID = amazonSellerID
+	authToken = amazonAuthToken
+	if amazonRegion == "" {
+		region = "US"
+	} else {
+		region = amazonRegion
+	}
+	accessKey = amazonAccessKey
+	secretKey = amazonSecretKey
+}
+
 // ----------------------------------------------------------------------------------------------
 //                                   Get Products by ASIN
 // ----------------------------------------------------------------------------------------------
 
 // GetProductsByASIN return an item from MWS by its ASIN
-func GetProductsByASIN(asin string) (map[string]*[]ProductTracking, error) {
+func GetProductsByASIN(asin, amazonSellerID, amazonAuthToken, amazonRegion, amazonAccessKey, amazonSecretKey string) (map[string]*[]ProductTracking, error) {
+	setMwsKeys(amazonSellerID, amazonAuthToken, amazonRegion, amazonAccessKey, amazonSecretKey)
 	productGroupings := make(map[string]*[]ProductTracking)
 	// calls MWS to find product by keyword
 	response := getMatchingProductForASIN(asin)
@@ -72,9 +85,6 @@ func parseMatchingProductForASIN(response *mwsHttps.Response, itemCondition stri
 			newProductTracking.PackageWidth = getProductDemensions(itemDemensions[0], "Width.#text")
 		}
 
-		// res2B1mws, _ := json.Marshal(newProductTracking)
-		// fmt.Println("item : ", string(res2B1mws))
-
 		productsWithPricing, productsWithPricingError := getPricingInformationForProduct(*newProductTracking, itemCondition)
 		if productsWithPricingError == nil {
 			productGroupings[asin] = productsWithPricing
@@ -89,7 +99,8 @@ func parseMatchingProductForASIN(response *mwsHttps.Response, itemCondition stri
 // ----------------------------------------------------------------------------------------------
 
 // GetProductsByKeyword return an item from MWS by its ASIN
-func GetProductsByKeyword(keyword string, itemCondition string) (map[string]*[]ProductTracking, error) {
+func GetProductsByKeyword(keyword, itemCondition, amazonSellerID, amazonAuthToken, amazonRegion, amazonAccessKey, amazonSecretKey string) (map[string]*[]ProductTracking, error) {
+	setMwsKeys(amazonSellerID, amazonAuthToken, amazonRegion, amazonAccessKey, amazonSecretKey)
 	productGroupings := make(map[string]*[]ProductTracking)
 	// calls MWS to find product by keyword
 	response := getMatchingProductForKeyword(keyword, itemCondition)
@@ -171,7 +182,7 @@ func getPricingInformationForProduct(product ProductTracking, itemCondition stri
 	if priceResponseError == nil {
 		return priceResponse, priceResponseError
 	}
-	fmt.Println("Mws.parser.getPricingInformationForProduct : " + priceResponseError.Error())
+	// fmt.Println("Mws.parser.getPricingInformationForProduct : " + priceResponseError.Error())
 
 	priceResponse, priceResponseError = parseLowestOfferListingsForASIN(product.Asin, itemCondition, product)
 	if priceResponseError == nil {
@@ -201,13 +212,13 @@ func parseLowestPricedOffersForASIN(asin, itemCondition string, product ProductT
 	}
 
 	if response.Error != nil {
-		fmt.Println("parseLowestPricedOffersForASIN : response error ", response.Error.Error())
-		xmlNode.PrintXML()
-		fmt.Println("--------------------------------------------")
+		// fmt.Println("parseLowestPricedOffersForASIN : response error ", response.Error.Error())
+		// xmlNode.PrintXML()
+		// fmt.Println("--------------------------------------------")
 		return listProducts, response.Error
 	}
 
-	fmt.Println("parseLowestPricedOffersForASIN")
+	// fmt.Println("parseLowestPricedOffersForASIN")
 	offers := xmlNode.FindByPath("GetLowestPricedOffersForASINResponse.GetLowestPricedOffersForASINResult.Offers.Offer")
 	if len(offers) == 0 {
 		return listProducts, errors.New("could not parse offers")
@@ -234,6 +245,7 @@ func parseLowestPricedOffersForASIN(asin, itemCondition string, product ProductT
 		newProduct.SaleAmount = getXMLFloat64Value(offer.FindByPath("ListingPrice.Amount"))
 		newProduct.RegularAmount = getXMLFloat64Value(offer.FindByPath("ListingPrice.Amount"))
 		newProduct.ShippingAmount = getXMLFloat64Value(offer.FindByPath("Shipping.Amount"))
+		newProduct.AmazonFees = CalculateFees(&newProduct)
 		*listProducts = append(*listProducts, newProduct)
 	}
 
@@ -262,9 +274,9 @@ func parseLowestOfferListingsForASIN(asin, itemCondition string, product Product
 	//	xmlNode.PrintXML()
 
 	if response.Error != nil {
-		fmt.Println("parseLowestOfferListingsForASIN : response error ", response.Error.Error())
-		xmlNode.PrintXML()
-		fmt.Println("--------------------------------------------")
+		// fmt.Println("parseLowestOfferListingsForASIN : response error ", response.Error.Error())
+		// xmlNode.PrintXML()
+		// fmt.Println("--------------------------------------------")
 		return listProducts, response.Error
 	}
 
@@ -289,6 +301,7 @@ func parseLowestOfferListingsForASIN(asin, itemCondition string, product Product
 		newProduct.SaleAmount = getXMLFloat64Value(offer.FindByPath("Price.LandedPrice.Amount"))
 		newProduct.RegularAmount = getXMLFloat64Value(offer.FindByPath("Price.ListingPrice.Amount"))
 		newProduct.ShippingAmount = getXMLFloat64Value(offer.FindByPath("Price.Shipping.Amount"))
+		newProduct.AmazonFees = CalculateFees(&newProduct)
 		*listProducts = append(*listProducts, newProduct)
 	}
 

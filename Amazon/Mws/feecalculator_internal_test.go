@@ -141,6 +141,61 @@ func TestSmallOverSizeCEItem(t *testing.T) {
 
 // end Small Over Size Test
 
+// start large standard size testing
+func TestLargeStandardSize(t *testing.T) {
+	merchantExpected := 6.64
+	expectedAmazon := 12.02
+	productItem := new(ProductTracking)
+	productItem.Asin = "B00GSN5H2O"
+	productItem.Category = "Toy"
+	productItem.PackageLength = 10.5
+	productItem.PackageWidth = 10.2
+	productItem.PackageHeight = 6.0
+	productItem.PackageWeight = 1.25
+	productItem.Channel = "Merchant"
+	productItem.RegularAmount = 44.24
+	productItem.SaleAmount = 44.24
+
+	actual := CalculateFees(productItem)
+	if actual != merchantExpected {
+		t.Errorf("merchantExpected: '%g', got: '%g'", merchantExpected, actual)
+	}
+
+	productItem.Channel = "Amazon"
+	actual = CalculateFees(productItem)
+	if actual != expectedAmazon {
+		t.Errorf("expectedAmazon: '%g', got: '%g'", expectedAmazon, actual)
+	}
+}
+
+func TestLargeStandardSizeUnknownCategory(t *testing.T) {
+	merchantExpected := 7.5
+	expectedAmazon := 12.88
+	productItem := new(ProductTracking)
+	productItem.Asin = "B00P4L6DW4"
+	productItem.Category = "Unknown"
+	productItem.PackageLength = 12.0
+	productItem.PackageWidth = 10.9
+	productItem.PackageHeight = 4.8
+	productItem.PackageWeight = 2.46
+	productItem.Channel = "Merchant"
+	productItem.RegularAmount = 50.0
+	productItem.SaleAmount = 50.0
+
+	actual := CalculateFees(productItem)
+	if actual != merchantExpected {
+		t.Errorf("merchantExpected: '%g', got: '%g'", merchantExpected, actual)
+	}
+
+	productItem.Channel = "Amazon"
+	actual = CalculateFees(productItem)
+	if actual != expectedAmazon {
+		t.Errorf("expectedAmazon: '%g', got: '%g'", expectedAmazon, actual)
+	}
+}
+
+// end large standard size testing
+
 func TestGettingAmazonFeeOptionsByNameReturnMotorCycle(t *testing.T) {
 	expected := 12.0
 	actual := getAmazonFeeOptions("MotorCycle")
