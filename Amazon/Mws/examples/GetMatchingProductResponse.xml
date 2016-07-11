@@ -1,0 +1,78 @@
+<GetMatchingProductResponse xmlns="http://mws.amazonservices.com/schema/Products/2011-10-01">
+  <GetMatchingProductResult ASIN="B00IGR5EQE" status="Success">
+    <Product ns2="http://mws.amazonservices.com/schema/Products/2011-10-01/default.xsd" xmlns="http://mws.amazonservices.com/schema/Products/2011-10-01">
+      <AttributeSets>
+        <ItemAttributes lang="en-US">
+          <Binding>Toy</Binding>
+          <Brand>Spin Master Games</Brand>
+          <Feature>Remember which moustache you're wearing and watch for a card match. If it's the same color or shape, SMASH that 'stache card! If you're the fastest, you get a point.</Feature>
+          <Feature>A Moustache Pass card makes everyone pass their 'stache to their left. Don't forget what your new one looks like or you might smash the wrong 'stache!</Feature>
+          <Feature>When the entire deck of 32 moustache cards is gone, the player who has collected the most moustache cards wins!</Feature>
+          <Feature>Moustache Smash is for 3-6 players, ages 7+</Feature>
+          <Feature>Includes: 6 Moustache Sticks, 32 Moustache Cards, and 1 Instruction Sheet.</Feature>
+          <IsAdultProduct>false</IsAdultProduct>
+          <ItemDimensions>
+            <Height Units="inches">1.13</Height>
+            <Length Units="inches">5.00</Length>
+            <Width Units="inches">11.25</Width>
+          </ItemDimensions>
+          <ItemPartNumber>6021974</ItemPartNumber>
+          <Label>Spin Master</Label>
+          <Languages>
+            <Language>
+              <Name>english</Name>
+              <Type>Unknown</Type>
+            </Language>
+          </Languages>
+          <ListPrice>
+            <Amount>15.99</Amount>
+            <CurrencyCode>USD</CurrencyCode>
+          </ListPrice>
+          <Manufacturer>Spin Master</Manufacturer>
+          <ManufacturerMaximumAge Units="months">132.0</ManufacturerMaximumAge>
+          <ManufacturerMinimumAge Units="months">72.0</ManufacturerMinimumAge>
+          <Model>6021974</Model>
+          <PackageDimensions>
+            <Height Units="inches">2.00</Height>
+            <Length Units="inches">10.60</Length>
+            <Weight Units="pounds">0.95</Weight>
+            <Width Units="inches">10.60</Width>
+          </PackageDimensions>
+          <PackageQuantity>1</PackageQuantity>
+          <PartNumber>6021974</PartNumber>
+          <ProductGroup>Toy</ProductGroup>
+          <ProductTypeName>TOYS_AND_GAMES</ProductTypeName>
+          <Publisher>Spin Master</Publisher>
+          <SmallImage>
+            <Height Units="pixels">75</Height>
+            <URL>http://ecx.images-amazon.com/images/I/61vuSksS2%2BL._SL75_.jpg</URL>
+            <Width Units="pixels">75</Width>
+          </SmallImage>
+          <Studio>Spin Master</Studio>
+          <Title>Spin Master Games - Moustache Smash</Title>
+          <Warranty>No Warranty</Warranty>
+        </ItemAttributes>
+      </AttributeSets>
+      <Identifiers>
+        <MarketplaceASIN>
+          <ASIN>B00IGR5EQE</ASIN>
+          <MarketplaceId>ATVPDKIKX0DER</MarketplaceId>
+        </MarketplaceASIN>
+      </Identifiers>
+      <Relationships/>
+      <SalesRankings>
+        <SalesRank>
+          <ProductCategoryId>toy_display_on_website</ProductCategoryId>
+          <Rank>7139</Rank>
+        </SalesRank>
+        <SalesRank>
+          <ProductCategoryId>166225011</ProductCategoryId>
+          <Rank>353</Rank>
+        </SalesRank>
+      </SalesRankings>
+    </Product>
+  </GetMatchingProductResult>
+  <ResponseMetadata>
+    <RequestId>1172229c-5e2a-47cb-a2d9-10c8b3239662</RequestId>
+  </ResponseMetadata>
+</GetMatchingProductResponse>
