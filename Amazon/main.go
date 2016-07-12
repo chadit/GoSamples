@@ -28,14 +28,14 @@ func main() {
 	//getLowestOfferListingsForASIN("B00078ZLLI", "New")
 	//	listProducts, _ := parseLowestOfferListingsForASIN("B00IGR5EQE", "New", ProductTracking{})
 	listProducts, listProductsError := Mws.GetProductsByKeyword("Spin Master Games - Moustache Smash", "New", SellerID, AuthToken, Region, AccessKey, SecretKey)
-	// if listProductsError != nil {
-	// 	fmt.Println("error getting products by keyword : " + listProductsError.Error())
-	// 	return
-	// }
-	//
+
 	if listProductsError != nil {
 		fmt.Println("error")
 	} else {
+
+		// for _, listProduct := range listProducts {
+		// 	//items := listpro
+		// }
 
 		res2B1mws, _ := json.Marshal(listProducts)
 		fmt.Println("item : ", string(res2B1mws))
