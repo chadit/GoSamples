@@ -10,22 +10,42 @@ import (
 	"os"
 )
 
-func main() {
-	prikey, pubkey, _ := GeneratingKey(4048)
-	writeFile(prikey, "C:\\temp\\private_key")
-	writeFile(pubkey, "C:\\temp\\public_key.pub")
-	// fmt.Println(prikey)
-	// fmt.Println("--------------")
-	// fmt.Println(pubkey)
-	// f, fError := os.Create("C:\\temp\\private_key")
-	// if fError != nil {
-	// 	fmt.Println(fError)
-	// }
-	// defer f.Close()
-	// f.WriteString(prikey)
+var (
+	folderPath string
+)
 
-	//fmt.Println(strings.Contains(prikey, "-----BEGIN RSA PRIVATE KEY-----"))
-	//fmt.Println(strings.Contains(pubkey, "-----BEGIN RSA PUBLIC KEY-----"))
+func getFolderPath() string {
+	var f string
+	fmt.Print("Please enter a folder to save files (Ex: c:\\Temp) : ")
+	if _, err := fmt.Scan(&f); err != nil {
+		fmt.Println("input error due to : ", err)
+		getFolderPath()
+	}
+
+	if f == "" {
+		f = "C:\\Temp"
+	}
+	folderPath = f
+	return f
+}
+
+func getInput() int {
+	fmt.Print("Please enter an integer (Ex: 4048) : ")
+	var i int
+	if _, err := fmt.Scan(&i); err != nil {
+		fmt.Println("input error due to : ", err)
+		getInput()
+	}
+	return i
+}
+
+func main() {
+	createFolder(getFolderPath())
+
+	prikey, pubkey, _ := GeneratingKey(getInput())
+	writeFile(prikey, folderPath+"\\private_key")
+	writeFile(pubkey, folderPath+"\\public_key.pub")
+	fmt.Println("RSA keys where created at : ", folderPath)
 }
 
 func writeFile(data, file string) {
@@ -107,4 +127,33 @@ func parsePublicKey(publicKey []byte) (*rsa.PublicKey, error) {
 		return nil, err
 	}
 	return pubkey.(*rsa.PublicKey), nil
+}
+
+// fileFolderExists returns whether the given file or directory exists or not
+func fileFolderExists(path string) (bool, error) {
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			// FileFolderExists does not exist
+			return false, nil
+		}
+		return true, nil
+	}
+	return true, nil
+}
+
+// createFolder create a folder if it does not already exist
+func createFolder(path string) (bool, error) {
+	results, err := fileFolderExists(path)
+	if err != nil {
+		return false, err
+	}
+
+	if results == false {
+		fileErr := os.MkdirAll(path, 0x711)
+		if fileErr != nil {
+			return false, err
+		}
+		return true, nil
+	}
+	return false, err
 }
