@@ -6,8 +6,18 @@ import (
 )
 
 func main() {
-	minusTwoHoursFromNow()
+	// 1469909149 = 7/30/2016 20:5:48
+	convertIntToTime()
+	// minusTwoHoursFromNow()
 	//fiveDaysFromNow()
+}
+
+func convertIntToTime() {
+	var epochTimeStamp int64
+	epochTimeStamp = 1469909149
+	timeInfo := time.Unix(epochTimeStamp, 0)
+	//30 Jul 2016 20:05:49 GMT
+	fmt.Println(timeInfo.UTC(), "7/30/2016 20:05:49")
 }
 
 func minusTwoHoursFromNow() {
