@@ -7,9 +7,41 @@ import (
 
 func main() {
 	// 1469909149 = 7/30/2016 20:5:48
-	convertIntToTime()
+	//daysSince()
+	daysBetween1()
+	//	convertIntToTime()
 	// minusTwoHoursFromNow()
 	//fiveDaysFromNow()
+}
+
+func daysSince() {
+	// year, month, day, hour, seconds, millisonds, nanoseconds, format type
+	longTimeAgo := time.Date(2016, time.January, 2, 20, 0, 0, 0, time.UTC)
+	fmt.Println("TrialDate", longTimeAgo)
+
+	hoursSince := int(time.Since(longTimeAgo).Hours())
+	fmt.Println("hourSince : ", hoursSince)
+	if hoursSince < 0 {
+		// swap it and make it a positive
+		hoursSince = hoursSince * -1
+		modifier := 0
+		if hoursSince >= 24 {
+			modifier = int(hoursSince / 24)
+			fmt.Println("modifier : ", modifier)
+		}
+
+		fmt.Println("trial is greater then : ", 30+modifier)
+		return
+	}
+
+	daysForTrial := 30
+	hoursForTrial := daysForTrial * 24
+	hoursFromTrial := hoursForTrial - hoursSince
+
+	fmt.Println("hoursForTrial : ", hoursForTrial)
+	fmt.Println("hoursFromTrial : ", hoursFromTrial)
+
+	fmt.Println("Days : ", (hoursForTrial-hoursSince)/24)
 }
 
 func convertIntToTime() {
@@ -58,4 +90,22 @@ func daysBetween() {
 	days := int(diff.Hours() / 24)
 
 	fmt.Printf("18th May 2010 was %d days ago \n", days)
+}
+
+func daysBetween1() {
+	now := time.Now()
+
+	fmt.Println("Today : ", now.Format("Mon, Jan 2, 2006 at 3:04pm"))
+
+	longTimeAgo := time.Date(2016, time.August, 31, 0, 0, 0, 0, time.UTC)
+
+	// calculate the time different between today
+	// and long time ago
+
+	diff := now.Sub(longTimeAgo)
+
+	// convert diff to days
+	days := int(diff.Hours() / 24)
+
+	fmt.Printf("31st July 2016 was %d days ago \n", days)
 }
