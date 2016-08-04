@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"os/exec"
 	"regexp"
 	"sort"
 	"strconv"
@@ -23,17 +24,53 @@ func main() {
 
 func main() {
 	fmt.Println("start")
-	// cmd := exec.Command("java", "-jar", "D:\\Projects\\GoWorkspace\\src\\GoSamples\\selenium\\selenium-server-standalone.jar")
-	// err := cmd.Start()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	runScrappingTest()
 
-	//runSeleniumTest()
+	isServiceUp := isSeleniumServiceRunning()
+	if isServiceUp {
+		fmt.Println("service is running")
+	} else {
+		startupError := startSeleniumService()
+		if startupError != nil {
+			fmt.Println("failed to start selenium service : ", startupError)
+			panic("boom")
+		}
+		isServiceUp = isSeleniumServiceRunning()
+		if isServiceUp {
+			fmt.Println("service is running")
+		} else {
+			fmt.Println("service is not running")
+			panic("boom-boom")
+		}
+	}
 
-	//	cmd.Process.Signal(os.Kill)
 	fmt.Println("end")
+}
+
+func startSeleniumService() error {
+	cmd := exec.Command("java", "-jar", "D:\\Projects\\GoWorkspace\\src\\GoSamples\\selenium\\selenium-server-standalone.jar")
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func isSeleniumServiceRunning() bool {
+	defer func() {
+		if r := recover(); r != nil {
+			// if selenium server is not running the driver will panic
+		}
+	}()
+
+	wd := getWebDriver()
+	defer wd.Quit()
+
+	_, seleniumStatusError := wd.Status()
+	if seleniumStatusError != nil {
+		// if there is some other error that occured trying to start the driver and get the status
+		return false
+	}
+	return true
 }
 
 func getWebDriver() selenium.WebDriver {
