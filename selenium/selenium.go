@@ -29,11 +29,11 @@ func main() {
 	if isServiceUp {
 		fmt.Println("service is running")
 	} else {
-		startupError := startSeleniumService()
-		if startupError != nil {
-			fmt.Println("failed to start selenium service : ", startupError)
-			panic("boom")
-		}
+		// startupError := startSeleniumService()
+		// if startupError != nil {
+		// 	fmt.Println("failed to start selenium service : ", startupError)
+		// 	panic("boom")
+		// }
 		isServiceUp = isSeleniumServiceRunning()
 		if isServiceUp {
 			fmt.Println("service is running")
@@ -64,7 +64,7 @@ func isSeleniumServiceRunning() bool {
 
 	wd := getWebDriver()
 	defer wd.Quit()
-
+	fmt.Println("driver opned")
 	_, seleniumStatusError := wd.Status()
 	if seleniumStatusError != nil {
 		// if there is some other error that occured trying to start the driver and get the status
