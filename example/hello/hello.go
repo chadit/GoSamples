@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 
-	"samples/example/stringutil"
+	"GoSamples/example/stringutil"
 )
 
 func main() {
 	fmt.Printf(stringutil.Reverse("!oG ,olleH"))
+	fmt.Println("")
 }
