@@ -39,49 +39,36 @@ func Hello(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func main() {
 	router := httprouter.New()
 	http.DefaultServeMux = http.NewServeMux()
-	//	router.GET("/", Index)
-	router.Handle("GET", "/test", TestGET)
-	router.Handle("POST", "/test", TestPOST)
 
-	//router.GET("/test", TestGET)
-	//router.POST("/test", TestPOST)
-	//	router.GET("/hello/:name", Hello)
+	if !doesRouteAlreadyExist("GET", "/test", router) {
+		fmt.Println("GET 1 does not exist")
+		router.Handle("GET", "/test", TestGET)
+	}
+
+	if !doesRouteAlreadyExist("GET", "/test", router) {
+		fmt.Println("GET 2 does not exist")
+		router.Handle("GET", "/test", TestGET)
+	}
+
+	h2, p2, e2 := router.Lookup("GET", "/test/1")
+	fmt.Println("Exist ", e2)
+
+	if h2 == nil {
+		fmt.Println("h2 was nil")
+	} else {
+		fmt.Println("h2 was not nil")
+	}
+
+	if p2 == nil {
+		fmt.Println("p2 was nil")
+	} else {
+		fmt.Println("p2 was not nil")
+	}
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
-func (t T) setupRoute(m, u string, h func(T) T) {
-	t.method = m
-	t.handler = h
-	t.requireAuth = true
-	t.Router.OPTIONS(u, t.handleOPTIONS)
-	t.Router.Handle(m, u, t.vetHTTPRequest)
-}
-
-// T test
-type T struct {
-	method      string             // indicates HTTP method (e.g: "GET", "POST")
-	Router      *httprouter.Router // handles routing concerns
-	handler     func(T) T          // handles concerns unique to a particular route
-	requireAuth bool               // indicates that route requires authentication
-}
-
-// handleOPTIONS handles OPTIONS requests.
-func (t T) handleOPTIONS(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if o := r.Header.Get("Origin"); o != "" {
-		h := w.Header()
-		h.Set("Access-Control-Allow-Origin", o)
-		h.Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		h.Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Referer")
-	}
-
-	if r.Method == "OPTIONS" {
-		return
-	}
-}
-
-// vetHTTPRequest is used for vetting HTTP requests.
-// Until user is authenticated and authorized, no request processing occurs.
-func (t T) vetHTTPRequest(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	t.handleOPTIONS(w, r, ps)
+func doesRouteAlreadyExist(method, path string, router *httprouter.Router) bool {
+	h, _, _ := router.Lookup(method, path)
+	return h != nil
 }
