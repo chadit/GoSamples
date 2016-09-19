@@ -6,12 +6,24 @@ import (
 )
 
 func main() {
+	parseDate()
 	// 1469909149 = 7/30/2016 20:5:48
 	//daysSince()
-	daysBetween1()
+	//daysBetween1()
 	//	convertIntToTime()
 	// minusTwoHoursFromNow()
 	//fiveDaysFromNow()
+}
+
+func parseDate() {
+	s := "2017-09-18"
+	v := "2006-01-02"
+	ptime, ptimeErr := time.Parse(v, s)
+	if ptimeErr != nil {
+		fmt.Println(ptimeErr)
+	}
+
+	fmt.Println(ptime)
 }
 
 func daysSince() {
