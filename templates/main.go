@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"html"
 	"path"
 	"strings"
 
@@ -21,12 +22,17 @@ type User struct {
 func main() {
 	templatePath := "/home/chadit/Projects/src/github.com/chadit/QikTrackerApi/main/templates"
 	u := User{FirstName: "John", LastName: "Smith", UserName: "", Email: "test@test.com"}
-	if r, err := generateWelcomeEmail(u, templatePath, false); err != nil {
+	if r, err := generateWelcomeEmail(u, templatePath, true); err != nil {
 		fmt.Println("error : ", err)
 	} else {
 		fmt.Println(r)
-		fmt.Println("")
+		fmt.Println("-------------------")
+		e := html.EscapeString(r)
+		fmt.Println(e)
+		ue := html.UnescapeString(e)
+		fmt.Println(ue)
 	}
+
 }
 
 func generateWelcomeEmail(user User, templatePath string, useEmbeddedTemaplate bool) (string, error) {
