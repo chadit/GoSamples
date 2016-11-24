@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Golang Simple HTML</title>
+    <script
+  src="http://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <h1>Golang Simple HTML</h1>
+
+    <p><a href="/">Home</a></p>
+
+    <p>This page is all about something.</p>
+<script LANGUAGE="JAVASCRIPT" TYPE="TEXT/JAVASCRIPT">
+// at the bottom of your controller
+var init = function () {
+  console.log ( 'sending patch' );
+
+  var data = {"resetToken" : "NCmJoe3PAOA/3ghTZmkC2zZlqG1PyizAnUH/OEaMf3wNr1+sTU1PTy6gpuOR1IzM", "password" : "ky1ttk#1"}
+  console.log ( data );
+  url = "http://localhost:3713/account/password/forgot/change"
+//  url = "http://ec2-52-36-84-142.us-west-2.compute.amazonaws.com/account/password/forgot/change"
+  $.ajax({
+      url: url,
+      type: 'PATCH',
+      data: data
+  });
+   // check if there is query in url
+   // and fire search in case its value is not empty
+};
+// and fire it after definition
+init();
+  </script>
+  </body>
+</html>
