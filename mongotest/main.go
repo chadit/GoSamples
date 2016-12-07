@@ -103,8 +103,8 @@ type Order struct {
 const databaseName = "GoLangTest"
 
 func main() {
-	complexTest()
-	// basicTest()
+	//complexTest()
+	basicTest()
 }
 
 func complexTest() {
@@ -135,9 +135,8 @@ func complexTest() {
 	newOrder.ID = bson.NewObjectId().Hex()
 	testOrder, _ := json.Marshal(newOrder)
 	fmt.Println(testOrder)
-	testOrder["test2"] = "testtest"
+	//testOrder["test2"] = "testtest"
 	//result["test"]
-
 }
 
 func addProperty(item bson.M) bson.M {
@@ -169,4 +168,7 @@ func basicTest() {
 	}
 
 	fmt.Println("Phone:", result.Phone)
+	session.Close()
+	fmt.Println("2")
+	session.Close()
 }
