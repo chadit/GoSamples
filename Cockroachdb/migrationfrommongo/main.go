@@ -52,20 +52,20 @@ func (db *DB) initDatabases() error {
 	fmt.Println("db.name : ", db.name)
 	fmt.Println("db.user : ", db.user)
 
-	db.databaseSetup()
+	//db.databaseSetup()
 
-	// if _, err = db.Exec(fmt.Sprintf("CREATE SCHEMA %s AUTHORIZATION %s", db.Schema, db.user)); err != nil {
-	// 	if err.Error() == fmt.Sprintf(ErrSchemaExists.Error(), db.Schema) {
-	// 		fmt.Println("ErrSchemaExists : ", err)
-	// 		//log.Println(err)
-	// 	} else {
-	// 		return err
-	// 	}
-	// }
+	if _, err = db.Exec(fmt.Sprintf("CREATE SCHEMA %s AUTHORIZATION %s", db.Schema, db.user)); err != nil {
+		if err.Error() == fmt.Sprintf(ErrSchemaExists.Error(), db.Schema) {
+			fmt.Println("ErrSchemaExists : ", err)
+			//log.Println(err)
+		} else {
+			return err
+		}
+	}
 
 	for _, script := range db.Script {
-		//if _, err = db.Exec(strings.Replace(script, "{{DBNAME}}.{{DBSCHEMA}}", fmt.Sprint(db.name, ".", db.Schema), -1)); err != nil {
-		if _, err = db.Exec(strings.Replace(script, "{{DBNAME}}", db.name, -1)); err != nil {
+		if _, err = db.Exec(strings.Replace(script, "{{DBNAME}}.{{DBSCHEMA}}", fmt.Sprint(db.name, ".", db.Schema), -1)); err != nil {
+			//if _, err = db.Exec(strings.Replace(script, "{{DBNAME}}", db.name, -1)); err != nil {
 			return err
 		}
 	}
@@ -73,23 +73,26 @@ func (db *DB) initDatabases() error {
 	return nil
 }
 
-func (db *DB) databaseSetup() error {
-	rootConn := strings.Replace(db.URL, db.user, "root", 1)
-	parsedURL, err := url.Parse(rootConn)
-	if err != nil {
-		return err
-	}
+// func (db *DB) databaseSetup() error {
+// 	rootConn := strings.Replace(db.URL, db.user, "root", 1)
+// 	parsedURL, err := url.Parse(rootConn)
+// 	if err != nil {
+// 		fmt.Println("parse error")
+// 		return err
+// 	}
 
-	dbroot, err := sql.Open("postgres", parsedURL.String())
-	if err != nil {
-		return err
-	}
+// 	dbroot, err := sql.Open("postgres", parsedURL.String())
+// 	if err != nil {
+// 		fmt.Println("parse open db err")
+// 		return err
+// 	}
 
-	if _, err := dbroot.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", db.name)); err != nil {
-		return err
-	}
-	return nil
-}
+// 	if _, err := dbroot.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", db.name)); err != nil {
+// 		fmt.Println("exec create db error")
+// 		return err
+// 	}
+// 	return nil
+// }
 
 // DB holds all methods necessary for SQL database logic.
 type DB struct {
@@ -104,7 +107,8 @@ type DB struct {
 func getDbSettings() DB {
 	return DB{
 		Script: DBTables,
-		URL:    "postgresql://maxroach@localhost:26257/QikTracker?sslmode=disable",
+		URL:    "postgres://postgres:postgres@127.0.0.1:5432/qiktracker?sslmode=disable",
+		//URL:    "postgresql://maxroach@localhost:26257/QikTracker?sslmode=disable",
 		//	Name:   "QikTracker",
 		Schema: "qik",
 	}
