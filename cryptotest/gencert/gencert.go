@@ -28,7 +28,7 @@ func main() {
 		NotAfter:     time.Now().Add(365 * 24 * time.Hour),
 		KeyUsage:     x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
 		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
-		IPAddresses:  []net.IP{net.ParseIP("127.0.0.1")},
+		IPAddresses:  []net.IP{net.ParseIP("127.0.0.1"), net.ParseIP("52.36.84.142"), net.ParseIP("ec2-52-36-84-142.us-west-2.compute.amazonaws.com")},
 	}
 
 	pk, _ := rsa.GenerateKey(rand.Reader, 2048)
