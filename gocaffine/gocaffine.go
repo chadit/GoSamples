@@ -15,6 +15,8 @@ import (
 	"github.com/micmonay/keybd_event"
 )
 
+// to run on windows, need git installed and stty mapped to the path
+
 func main() {
 	// Create a channel to detect interruptions, so we can shutdown the different components appropiately.
 	exit := make(chan os.Signal, 1)
