@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"google.golang.org/api/iterator"
-	//"go.uber.org/zap/zapcore"
 	"cloud.google.com/go/logging"
 	"cloud.google.com/go/logging/logadmin"
+	"google.golang.org/api/iterator"
 )
 
 // follow these to setup
@@ -48,6 +47,7 @@ func main() {
 	lg := client.Logger("my-log")
 
 	// Add entry to log buffer
+
 	lg.Log(logging.Entry{Payload: "something happened!"})
 
 	// Close the client when finished.
