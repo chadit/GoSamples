@@ -2,6 +2,8 @@ package zapgoogle
 
 import (
 	"context"
+	"encoding/json"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -15,7 +17,6 @@ type Core struct {
 	encoder zapcore.Encoder
 	writer  *Writer
 	fields  []zapcore.Field
-	//Logger  *logging.Logger
 }
 
 // Writer implements customer options
@@ -91,30 +92,28 @@ func (c *Core) Write(entry zapcore.Entry, fields []zapcore.Field) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to encode log entry")
 	}
-	//log := initLogger(c.writer.ProjectName, c.writer.LogName)
+
+	p := make(map[string]interface{})
+	if err := json.NewDecoder(strings.NewReader(buffer.String())).Decode(&p); err != nil {
+		return err
+	}
 
 	g := logging.Entry{
 		Severity:  severity[entry.Level],
 		Timestamp: entry.Time,
-		Payload:   buffer.String(),
+		//Payload:   buffer.String(),
+		Payload: p,
 	}
 
-	// if g.Severity == logging.Critical {
-	// 	fmt.Println("logging.Critical")
-	// 	go func() {
+	if g.Severity == logging.Critical || g.Severity == logging.Error {
+		go func() {
+			if err := c.writer.Logger.LogSync(context.Background(), g); err != nil {
+				return
+			}
+		}()
+		return nil
+	}
 
-	// 		if err := log.LogSync(context.Background(), g); err != nil {
-	// 			fmt.Println(err)
-	// 			return
-	// 		}
-	// 		//log.Flush()
-	// 		fmt.Println("logging.Critical - end")
-	// 		//return nil
-	// 	}()
-	// 	return nil
-	// }
-
-	//log.Log(g)
 	c.writer.Logger.Log(g)
 	return nil
 }
