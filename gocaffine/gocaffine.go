@@ -93,7 +93,7 @@ func keyboardListener() {
 }
 
 func keyboardEvent(kb keybd_event.KeyBonding) error {
-	fmt.Println("beep")
+	//	fmt.Println("beep")
 	kb.SetKeys(keybd_event.VK_F15)
 	return kb.Launching()
 }
