@@ -26,7 +26,7 @@ func (h *handler) processTextFiles() {
 			return
 		}
 
-		buf := make([]byte, 32*1024)
+		buf := make([]byte, 32*2024)
 
 		for {
 			n, err := f.Read(buf)
