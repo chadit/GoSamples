@@ -10,16 +10,21 @@ import (
 
 const keywordPath = "./keywords"
 
-func loadKeywords() error {
+func (h *handler) loadKeywords() {
 	files, err := getFiles(keywordPath)
 	if err != nil {
-		return err
+		h.errorCh <- err
+		return
 	}
 	for _, file := range files {
 		fp := keywordPath + "/" + file.Name()
-		f, _ := os.Open(fp)
+		f, err := os.Open(fp)
+		if err != nil {
+			h.errorCh <- err
+			continue
+		}
 
-		buf := make([]byte, 32*1024) // define your buffer size here.
+		buf := make([]byte, 32*1024)
 
 		for {
 			n, err := f.Read(buf)
@@ -30,24 +35,29 @@ func loadKeywords() error {
 						continue
 					}
 					k = strings.ToLower(k)
-					if !stringExist(k, keywords) {
-						keywords = append(keywords, k)
-						kwmap[k] = 0
+					h.key.lock.Lock()
+					if _, ok := h.key.kwmap[k]; !ok {
+						h.key.keywords = append(h.key.keywords, k)
+						h.key.kwmap[k] = 0
 					}
+					h.key.lock.Unlock()
+
 				}
 			}
 
 			if err == io.EOF {
+				f.Close()
 				break
 			}
 			if err != nil {
 				log.Printf("read %d bytes: %v", n, err)
+				f.Close()
 				break
 			}
 		}
 
 	}
-	sort.Strings(keywords)
-
-	return nil
+	h.key.lock.Lock()
+	sort.Strings(h.key.keywords)
+	h.key.lock.Unlock()
 }

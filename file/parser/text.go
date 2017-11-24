@@ -3,125 +3,134 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
-	"sync"
 	"sync/atomic"
 	"time"
 )
 
 const textPath = "./text_files"
 
-var lock = sync.RWMutex{}
-var lineHashes = make(map[uint64]int)
-
-func (h handler) processTextFiles() error {
+func (h *handler) processTextFiles() {
 	files, err := getFiles(textPath)
 	if err != nil {
-		return err
+		h.errorCh <- err
+		return
 	}
-
-	extractChannel := make(chan string)
 
 	for _, file := range files {
 		fp := textPath + "/" + file.Name()
-		f, _ := os.Open(fp)
+		f, err := os.Open(fp)
+		if err != nil {
+			h.errorCh <- err
+			return
+		}
 
-		buf := make([]byte, 32*1024) // define your buffer size here.
+		buf := make([]byte, 32*1024)
 
 		for {
 			n, err := f.Read(buf)
 
 			if n > 0 {
-				//lineHashes := make(map[uint64]int)
 				for _, k := range strings.Split(string(buf[:n]), "\r\n") {
-					extractChannel <- k
-					// ll := len(k)
-					// if ll == 0 {
-					// 	continue
-					// }
-
-					// keywordParser(k)
-
-					// if token := len(strings.Fields(k)); token > 0 {
-					// 	tokensPerLine = append(tokensPerLine, token)
-					// }
-
-					// lineLengths = append(lineLengths, ll)
-					// hl := hashFNV1a64(k)
-					// if _, ok := lineHashes[hl]; ok {
-					// 	dupCount++
-					// } else {
-					// 	lineHashes[hl] = 0
-					// }
+					if len(k) == 0 {
+						continue
+					}
+					h.extractCh <- k
 				}
 			}
 
 			if err == io.EOF {
-				fmt.Println("io.EOF")
+				f.Close()
 				break
 			}
 			if err != nil {
-				log.Printf("read %d bytes: %v", n, err)
+				h.errorCh <- fmt.Errorf("read %d bytes: %v", n, err)
+				f.Close()
 				break
 			}
 		}
-
 	}
-
-	return nil
+	close(h.extractCh)
 }
 
-func (h handler) parseLine() {
+func (h *handler) parseLine() {
 	var numMessages int64
-	for l := range h.extractChannel {
+	for l := range h.extractCh {
 		atomic.AddInt64(&numMessages, 1)
 		go func(l string) {
 			ll := len(l)
-			if ll == 0 {
-				return
-			}
-
-			keywordParser(l)
-
-			if token := len(strings.Fields(l)); token > 0 {
-				h.tokensPerLineChannel <- token
-				//tokensPerLine = append(tokensPerLine, token)
-			}
-			h.lineLengthsChannel <- ll
-			//	lineLengths = append(lineLengths, ll)
-			hl := hashFNV1a64(l)
-			if _, ok := lineHashes[hl]; ok {
-				atomic.AddInt64(&dupCount, 1)
-			} else {
-				lock.Lock()
-				lineHashes[hl] = 0
-				lock.Unlock()
+			if ll > 0 {
+				h.keywordCh <- l
+				if token := len(strings.Fields(l)); token > 0 {
+					h.tokensPerLineCh <- token
+				}
+				h.lineLengthsCh <- ll
+				hl := hashFNV1a64(l)
+				h.line.lock.Lock()
+				if _, ok := h.line.lineHashes[hl]; ok {
+					if h.line.dupCount == 0 {
+						atomic.AddInt64(&h.line.dupCount, 1)
+					}
+					atomic.AddInt64(&h.line.dupCount, 1)
+				} else {
+					h.line.lineHashes[hl] = true
+				}
+				h.line.lock.Unlock()
 			}
 			atomic.AddInt64(&numMessages, -1)
 		}(l)
 	}
 
-	// checks to see if messages are still being processed before closing the channel
 	for numMessages > 0 {
 		time.Sleep(1 * time.Millisecond)
 	}
 
-	close(h.lineLengthsChannel)
-	close(h.tokensPerLineChannel)
+	close(h.lineLengthsCh)
+	close(h.tokensPerLineCh)
+	close(h.keywordCh)
 }
 
-func keywordParser(s string) {
-	if s == "" {
-		return
+func (h *handler) lineStatParser(llm chan int, lls chan float64) {
+	d := []int{}
+	for n := range h.lineLengthsCh {
+		d = append(d, n)
+	}
+	llm <- calcMedian(d)
+	lls <- calcSD(d)
+}
+
+func (h *handler) tokenStatParser(ttm chan int, tts chan float64) {
+	d := []int{}
+	for n := range h.tokensPerLineCh {
+		d = append(d, n)
+	}
+	ttm <- calcMedian(d)
+	tts <- calcSD(d)
+}
+
+func (h *handler) keywordParser() {
+	var numMessages int64
+	h.loadKeywords()
+
+	for l := range h.keywordCh {
+		atomic.AddInt64(&numMessages, 1)
+		go func(l string, h *handler) {
+			l = strings.ToLower(l)
+
+			h.key.lock.Lock()
+			for _, keyword := range h.key.keywords {
+				if strings.Contains(l, keyword) {
+					h.key.kwmap[keyword]++
+				}
+			}
+			h.key.lock.Unlock()
+			atomic.AddInt64(&numMessages, -1)
+		}(l, h)
 	}
 
-	s = strings.ToLower(s)
-
-	for _, keyword := range keywords {
-		if strings.Contains(s, keyword) {
-			kwmap[keyword]++
-		}
+	for numMessages > 0 {
+		time.Sleep(1 * time.Millisecond)
 	}
+	h.doneCh <- true
 }

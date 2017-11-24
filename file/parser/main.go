@@ -2,98 +2,116 @@ package main
 
 import (
 	"fmt"
-	"math"
-	"strings"
+	"os"
+	"sync"
 	"time"
 )
 
-// print out
-// -- number of duplicate lines
-// -----------------------------------------
-// -- median length of lines
-// -- -- slice of int, append length of each line, sort, if odd, get middle number
-// -- -- if even, get center two items, add together then divide by 2 to get median
-// -- standard deviation for length of lines -- https://www.easycalculation.com/statistics/standard-deviation.php
-// -----------------------------------------
-// -- median number of words (token) per line
-// -- standard deviation for words (token) per line
-
-/*
-extract --
-read each line, hash, add hash to map, if has exist inc dubLines
-pass line to process channel
-*/
-
-/*
-process --
-pull line off channel,
-append lineLength,
-append # of tokens per line
-kick off kerword search
-*/
-
-/*
-signal when completed, so report can be generated
-*/
-
 type handler struct {
-	extractChannel       chan string
-	transformChannel     chan string
-	lineLengthsChannel   chan int
-	tokensPerLineChannel chan int
-	doneChannel          chan bool
+	extractCh       chan string
+	keywordCh       chan string
+	lineLengthsCh   chan int
+	tokensPerLineCh chan int
+	doneCh          chan bool
+	errorCh         chan error
+	line            line
+	key             key
 }
 
-var (
-	keywords = []string{}
-	kwmap    = make(map[string]int)
-	dupCount int64
+type line struct {
+	lock       sync.RWMutex
+	lineHashes map[uint64]bool
+	dupCount   int64
+}
 
-//	lineLengths   = []int64{}
-//	tokensPerLine = []int64{}
-)
+type key struct {
+	lock     sync.RWMutex
+	keywords []string
+	kwmap    map[string]int
+}
 
 func main() {
+	f, _ := os.Create("./results.txt")
+	f.Close()
+	f1, _ := os.Create("./errors.txt")
+	f1.Close()
+
 	h := handler{
-		extractChannel:       make(chan string),
-		transformChannel:     make(chan string),
-		lineLengthsChannel:   make(chan int),
-		tokensPerLineChannel: make(chan int),
-		doneChannel:          make(chan bool),
+		extractCh:       make(chan string, 1000),
+		keywordCh:       make(chan string, 1000),
+		lineLengthsCh:   make(chan int, 1000),
+		tokensPerLineCh: make(chan int, 1000),
+		errorCh:         make(chan error, 100),
+		doneCh:          make(chan bool),
+		line:            line{lock: sync.RWMutex{}, lineHashes: make(map[uint64]bool)},
+		key:             key{lock: sync.RWMutex{}, keywords: []string{}, kwmap: make(map[string]int)},
 	}
 
-	strart := time.Now()
-	fmt.Println("Hello")
-	if err := loadKeywords(); err != nil {
-		fmt.Printf("failed to load keywords : %v\n", err)
-		return
-	}
+	start := time.Now()
+	fmt.Println("Parsing text")
 
-	if err := h.processTextFiles(); err != nil {
-		fmt.Printf("failed to load text : %v\n", err)
-		return
-	}
-	lm, ls := calcstats(h.lineLengthsChannel)
-	tm, ts := calcstats(h.tokensPerLineChannel)
-	fmt.Println("Results:\n---------------------------------------")
-	fmt.Printf("num dupes  \t\t| %d\n", dupCount)
-	fmt.Printf("line med length \t| %d\n", lm)
-	fmt.Printf("line std length \t| %.2f\n", ls)
-	fmt.Printf("token med length \t| %d\n", tm)
-	fmt.Printf("token std length \t| %.2f\n", ts)
+	go h.processTextFiles()
+	go h.parseLine()
+	go h.keywordParser()
 
-	for _, k := range keywords {
-		fmt.Printf("%s%s| %d\n", k, setTabs(k), kwmap[k])
-	}
+	llm := make(chan int, 5)
+	lls := make(chan float64, 5)
+	ttm := make(chan int, 5)
+	tts := make(chan float64, 5)
+	go h.lineStatParser(llm, lls)
+	go h.tokenStatParser(ttm, tts)
 
-	fmt.Println(time.Since(strart))
+	reportCh := make(chan string, 10)
+	reportDoneCh := make(chan bool)
+	errorDoneCh := make(chan bool)
+	go logResults(reportCh, reportDoneCh)
+	go errorResults(h.errorCh, errorDoneCh)
+	<-h.doneCh
+	r := fmt.Sprintf("num dupes\t%d\n", h.line.dupCount) +
+		fmt.Sprintf("med length\t%d\n", <-llm) +
+		fmt.Sprintf("std length\t%.2f\n", <-lls) +
+		fmt.Sprintf("med tokens\t%d\n", <-ttm) +
+		fmt.Sprintf("std length\t%.2f\n", <-tts)
+
+	for _, k := range h.key.keywords {
+		r += fmt.Sprintf("keyword_%s\t%d\n", k, h.key.kwmap[k])
+	}
+	reportCh <- r
+	close(reportCh)
+	close(h.errorCh)
+	<-reportDoneCh
+	<-errorDoneCh
+	fmt.Println(time.Since(start))
 }
 
-func setTabs(s string) string {
-	c := int(math.Floor(float64(len(s) / 5)))
-	s1 := "\t\t\t"
-	for i := 0; i < c; i++ {
-		s1 = strings.Replace(s1, "\t", "", 1)
-	}
-	return s1
+func logResults(reportCh chan string, reportDoneCh chan bool) {
+	go func() {
+		for {
+			msg, ok := <-reportCh
+			if ok {
+				f, _ := os.OpenFile("./results.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+				f.WriteString(msg)
+				f.Close()
+			} else {
+				reportDoneCh <- true
+				break
+			}
+		}
+	}()
+}
+
+func errorResults(errorCh chan error, errorDoneCh chan bool) {
+	go func() {
+		for {
+			msg, ok := <-errorCh
+			if ok {
+				f, _ := os.OpenFile("./errors.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+				f.WriteString(msg.Error())
+				f.Close()
+			} else {
+				errorDoneCh <- true
+				break
+			}
+		}
+	}()
 }

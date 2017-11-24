@@ -7,15 +7,6 @@ import (
 	"sort"
 )
 
-func stringExist(kw string, kws []string) bool {
-	for i := range kws {
-		if kws[i] == kw {
-			return true
-		}
-	}
-	return false
-}
-
 func hashFNV1a64(s string) uint64 {
 	h := fnv.New64a()
 	if _, err := h.Write([]byte(s)); err != nil {
@@ -30,7 +21,6 @@ func getFiles(s string) ([]os.FileInfo, error) {
 		return []os.FileInfo{}, err
 	}
 
-	// get all the files in the director
 	return d.Readdir(-1)
 }
 
