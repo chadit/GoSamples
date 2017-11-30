@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"sync"
 	"time"
@@ -31,11 +32,6 @@ type key struct {
 }
 
 func main() {
-	f, _ := os.Create("./results.txt")
-	f.Close()
-	f1, _ := os.Create("./errors.txt")
-	f1.Close()
-
 	h := handler{
 		extractCh:       make(chan string, 1000),
 		keywordCh:       make(chan string, 1000),
@@ -64,7 +60,7 @@ func main() {
 	reportCh := make(chan string, 10)
 	reportDoneCh := make(chan bool)
 	errorDoneCh := make(chan bool)
-	go logResults(reportCh, reportDoneCh)
+	go logResults(reportCh, reportDoneCh, h.errorCh)
 	go errorResults(h.errorCh, errorDoneCh)
 	<-h.doneCh
 	r := fmt.Sprintf("num dupes\t%d\n", h.line.dupCount) +
@@ -84,14 +80,18 @@ func main() {
 	fmt.Println(time.Since(start))
 }
 
-func logResults(reportCh chan string, reportDoneCh chan bool) {
+func logResults(reportCh chan string, reportDoneCh chan bool, errorCh chan error) {
 	go func() {
 		for {
 			msg, ok := <-reportCh
 			if ok {
-				f, _ := os.OpenFile("./results.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+				f, err := os.OpenFile("./results.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+				if err != nil {
+					errorCh <- err
+					continue
+				}
+				defer f.Close()
 				f.WriteString(msg)
-				f.Close()
 			} else {
 				reportDoneCh <- true
 				break
@@ -105,9 +105,12 @@ func errorResults(errorCh chan error, errorDoneCh chan bool) {
 		for {
 			msg, ok := <-errorCh
 			if ok {
-				f, _ := os.OpenFile("./errors.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+				f, err := os.OpenFile("./errors.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+				if err != err {
+					log.Println(err)
+				}
+				defer f.Close()
 				f.WriteString(msg.Error())
-				f.Close()
 			} else {
 				errorDoneCh <- true
 				break
