@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"time"
+
+	"github.com/pkg/profile"
 )
 
 type handler struct {
@@ -21,6 +23,7 @@ type Stats struct {
 }
 
 func main() {
+	defer profile.Start(profile.ProfilePath(".")).Stop()
 	h := handler{
 		Lines: Lines{},
 		Keys:  Keys{},

@@ -1,0 +1,22 @@
+num dupes	325
+med length	59
+std length	16.91
+med tokens	10
+std length	3.46
+keyword_both countries	2
+keyword_england	0
+keyword_in	7256
+keyword_jaw	7
+keyword_life	145
+keyword_on	5100
+num dupes	325
+med length	59
+std length	16.91
+med tokens	10
+std length	3.46
+keyword_both countries	2
+keyword_england	0
+keyword_in	7256
+keyword_jaw	7
+keyword_life	145
+keyword_on	5100
