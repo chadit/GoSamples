@@ -1,6 +1,3 @@
-Rework of first attempt, to see older version, see parser.old
-
-
 To run application : 
     - docker-compose up
     

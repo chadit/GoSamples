@@ -1,28 +1,36 @@
 package main
 
 import (
+	"fmt"
 	"io"
-	"log"
 	"os"
 	"sort"
 	"strings"
 )
 
+// Keys slice of keys to utlize in parse
+type Keys []*Key
+
+// Key information about the key
+type Key struct {
+	Name  string
+	Count int64
+}
+
 const keywordPath = "./keywords"
 
-func (h *handler) loadKeywords() {
+func (h *handler) LoadKeywords() error {
 	files, err := getFiles(keywordPath)
 	if err != nil {
-		h.errorCh <- err
-		return
+		return err
 	}
 	for _, file := range files {
 		fp := keywordPath + "/" + file.Name()
 		f, err := os.Open(fp)
 		if err != nil {
-			h.errorCh <- err
-			continue
+			return err
 		}
+		defer f.Close()
 
 		buf := make([]byte, 32*2024)
 
@@ -34,30 +42,43 @@ func (h *handler) loadKeywords() {
 					if k == "" {
 						continue
 					}
-					k = strings.ToLower(k)
-					h.key.lock.Lock()
-					if _, ok := h.key.kwmap[k]; !ok {
-						h.key.keywords = append(h.key.keywords, k)
-						h.key.kwmap[k] = 0
-					}
-					h.key.lock.Unlock()
 
+					if !h.KeyExist(strings.ToLower(k)) {
+						h.Keys = append(h.Keys, &Key{Name: k, Count: 0})
+					}
 				}
 			}
 
 			if err == io.EOF {
-				f.Close()
 				break
 			}
 			if err != nil {
-				log.Printf("read %d bytes: %v", n, err)
-				f.Close()
-				break
+				return fmt.Errorf("loadingKeywords : read %d bytes: %v", n, err)
 			}
 		}
 
 	}
-	h.key.lock.Lock()
-	sort.Strings(h.key.keywords)
-	h.key.lock.Unlock()
+	sort.Sort(h.Keys)
+	return nil
 }
+
+func (h *handler) KeywordParser(l string) {
+	for i := range h.Keys {
+		if strings.Contains(l, strings.ToLower(h.Keys[i].Name)) {
+			h.Keys[i].Count++
+		}
+	}
+}
+
+func (h *handler) KeyExist(k string) bool {
+	for i := range h.Keys {
+		if strings.ToLower(h.Keys[i].Name) == k {
+			return true
+		}
+	}
+	return false
+}
+
+func (k Keys) Len() int           { return len(k) }
+func (k Keys) Less(i, j int) bool { return k[i].Name < k[j].Name }
+func (k Keys) Swap(i, j int)      { k[i], k[j] = k[j], k[i] }
