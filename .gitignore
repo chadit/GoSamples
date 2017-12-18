@@ -27,4 +27,7 @@ _testmain.go
 *.idea
 *.vs
 
+*.pprof
 vendor/
+
+results.txt

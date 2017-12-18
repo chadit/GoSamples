@@ -23,7 +23,8 @@ type Stats struct {
 }
 
 func main() {
-	defer profile.Start(profile.ProfilePath(".")).Stop()
+	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
+	//defer profile.Start(profile.MemProfile, profile.ProfilePath(".")).Stop()
 	h := handler{
 		Lines: Lines{},
 		Keys:  Keys{},

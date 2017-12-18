@@ -23,3 +23,7 @@ where `d` represents the number of exactly duplicated lines seen, `lm` is the me
 number of tokens (via whitespace tokenization) per line, `ts` is the standard deviation of tokens
 per line, and `ka` ... `kn` represent the total number of lines the keyword was seen on, sorted
 alphabetically.
+
+
+CPU Profiler on 
+go tool pprof -text ./cpu.pprof
