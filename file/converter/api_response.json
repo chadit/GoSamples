@@ -1,0 +1,330 @@
+{
+    "sessionId": "16cce81d-0966-11e8-b3db-e4a4714d4158",
+    "transactionId": "2e6a17a0-1f3e-4ee7-ae89-e597016af936",
+    "schemas": [
+        {
+            "version": "v2",
+            "name": "Host"
+        },
+        {
+            "version": "v2",
+            "name": "Msg"
+        },
+        {
+            "version": "v3",
+            "name": "Availability"
+        },
+        {
+            "version": "v3",
+            "name": "Campaign"
+        },
+        {
+            "version": "v3",
+            "name": "Cart"
+        },
+        {
+            "version": "v3",
+            "name": "Channel"
+        },
+        {
+            "version": "v3",
+            "name": "ChannelCategory"
+        },
+        {
+            "version": "v3",
+            "name": "ChannelService"
+        },
+        {
+            "version": "v3",
+            "name": "Classification"
+        },
+        {
+            "version": "v3",
+            "name": "Confirmation"
+        },
+        {
+            "version": "v3",
+            "name": "DVRService"
+        },
+        {
+            "version": "v3",
+            "name": "Feature"
+        },
+        {
+            "version": "v3",
+            "name": "FollowUp"
+        },
+        {
+            "version": "v3",
+            "name": "HDService"
+        },
+        {
+            "version": "v3",
+            "name": "HomeSecurity"
+        },
+        {
+            "version": "v3",
+            "name": "Internet"
+        },
+        {
+            "version": "v3",
+            "name": "ListOfSetTopBoxes"
+        },
+        {
+            "version": "v3",
+            "name": "LongDistance"
+        },
+        {
+            "version": "v3",
+            "name": "Modem"
+        },
+        {
+            "version": "v3",
+            "name": "Modems"
+        },
+        {
+            "version": "v3",
+            "name": "Offer"
+        },
+        {
+            "version": "v3",
+            "name": "Order"
+        },
+        {
+            "version": "v3",
+            "name": "OrderActivation"
+        },
+        {
+            "version": "v3",
+            "name": "OrderActivationDateRange"
+        },
+        {
+            "version": "v3",
+            "name": "OrderActivationStatus"
+        },
+        {
+            "version": "v3",
+            "name": "Phone"
+        },
+        {
+            "version": "v3",
+            "name": "Porting"
+        },
+        {
+            "version": "v3",
+            "name": "PremiumTVPackage"
+        },
+        {
+            "version": "v3",
+            "name": "PremiumTVService"
+        },
+        {
+            "version": "v3",
+            "name": "Price"
+        },
+        {
+            "version": "v3",
+            "name": "Promotion"
+        },
+        {
+            "version": "v3",
+            "name": "SetTopBox"
+        },
+        {
+            "version": "v3",
+            "name": "SetTopBoxes"
+        },
+        {
+            "version": "v3",
+            "name": "Speed"
+        },
+        {
+            "version": "v3",
+            "name": "TV"
+        },
+        {
+            "version": "v3",
+            "name": "TechnicalInstallation"
+        },
+        {
+            "version": "v3",
+            "name": "TechnicalInstallations"
+        },
+        {
+            "version": "v3",
+            "name": "TechnicalSupport"
+        },
+        {
+            "version": "v3",
+            "name": "TechnicalSupports"
+        },
+        {
+            "version": "v3",
+            "name": "Technology"
+        },
+        {
+            "version": "v3",
+            "name": "TechnologyFootprint"
+        },
+        {
+            "version": "v3",
+            "name": "Term"
+        },
+        {
+            "version": "v3",
+            "name": "WholeHomeService"
+        },
+        {
+            "version": "v3",
+            "name": "WholeHomeServices"
+        },
+        {
+            "version": "v3",
+            "name": "Address"
+        },
+        {
+            "version": "v3",
+            "name": "GeoPoint"
+        },
+        {
+            "version": "v3",
+            "name": "NormalizedAddress"
+        },
+        {
+            "version": "v3",
+            "name": "State"
+        },
+        {
+            "version": "v3",
+            "name": "Appointment"
+        },
+        {
+            "version": "v3",
+            "name": "Confirmation"
+        },
+        {
+            "version": "v3",
+            "name": "DateRange"
+        },
+        {
+            "version": "v3",
+            "name": "ErrorCode"
+        },
+        {
+            "version": "v3",
+            "name": "Meta"
+        },
+        {
+            "version": "v3",
+            "name": "Operation"
+        },
+        {
+            "version": "v3",
+            "name": "Payload"
+        },
+        {
+            "version": "v3",
+            "name": "Provider"
+        },
+        {
+            "version": "v3",
+            "name": "Session"
+        },
+        {
+            "version": "v3",
+            "name": "Identity"
+        },
+        {
+            "version": "v3",
+            "name": "Org"
+        },
+        {
+            "version": "v3",
+            "name": "Service"
+        },
+        {
+            "version": "v3",
+            "name": "ServicePage"
+        },
+        {
+            "version": "v3",
+            "name": "ServiceUser"
+        },
+        {
+            "version": "v3",
+            "name": "User"
+        },
+        {
+            "version": "v3",
+            "name": "UserServicePagePerm"
+        },
+        {
+            "version": "v3",
+            "name": "CallSession"
+        },
+        {
+            "version": "v3",
+            "name": "CreditCard"
+        },
+        {
+            "version": "v3",
+            "name": "Customer"
+        },
+        {
+            "version": "v3",
+            "name": "DriverLicense"
+        },
+        {
+            "version": "v3",
+            "name": "Information"
+        },
+        {
+            "version": "v3",
+            "name": "TermsAndConditions"
+        },
+        {
+            "version": "v3",
+            "name": "TermsAndConditionsChoices"
+        },
+        {
+            "version": "v3",
+            "name": "Schema"
+        },
+        {
+            "version": "v3",
+            "name": "Action"
+        },
+        {
+            "version": "v3",
+            "name": "CampaignFootprintItem"
+        },
+        {
+            "version": "v3",
+            "name": "HistoryRequest"
+        },
+        {
+            "version": "v3",
+            "name": "LogEntry"
+        },
+        {
+            "version": "v3",
+            "name": "MsgPayload"
+        },
+        {
+            "version": "v3",
+            "name": "Operation"
+        },
+        {
+            "version": "v3",
+            "name": "SessionHistory"
+        },
+        {
+            "version": "v3",
+            "name": "TransactionHistory"
+        },
+        {
+            "version": "v3",
+            "name": "TransactionMessage"
+        }
+    ]
+}

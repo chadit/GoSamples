@@ -13,3 +13,9 @@ func main() {
 func init() {
 	message = "Hello GO!!!!"
 }
+
+type TestStruct struct {
+	FirstName string
+	LastName  string
+	Email     string
+}

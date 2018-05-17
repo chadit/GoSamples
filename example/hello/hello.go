@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 
-	"GoSamples/example/stringutil"
+	"github.com/chadit/GoSamples/example/stringutil"
 )
 
 func main() {
-	fmt.Printf(stringutil.Reverse("!oG ,olleH"))
-	fmt.Println("")
+
+	fmt.Println("test")
+	msg := stringutil.Reverse("!oG ,olleH")
+	fmt.Println(msg)
 }

@@ -19,8 +19,9 @@ type Employee struct {
 }
 
 func main() {
+	fmt.Println("")
 	fmt.Printf("\nemployee array length start\n")
-	connectionString := "server=192.168.0.157;user id=chad;password=ky1ttk#1;database=DigitalFleet;port=1433"
+	connectionString := "server=192.168.0.157;user id=chad;password=Something;database=DigitalFleet;port=1433"
 	userPin := "440440"
 	query := "select EmployeeID,ClientID,Last_Name,First_Name, LOGIN, PIN from employees where PIN = " + userPin
 	rows, err := Microsoft.GetByQuery(connectionString, query)
